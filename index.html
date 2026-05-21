@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TechForge Reactive Avatar</title>
   <style>
-    /* Thiết lập giao diện trong suốt 100% và ẩn toàn bộ thanh cuộn cho OBS Studio */
+    /* Cấu hình hiển thị nền trong suốt và ẩn thanh cuộn phục vụ OBS Browser Source */
     html, body {
       margin: 0;
       padding: 0;
       width: 100vw;
       height: 100vh;
-      background-color: transparent !important; /* Đảm bảo nền trong suốt hoàn toàn */
-      overflow: hidden; /* Ẩn scrollbar để tránh viền cuộn trong OBS */
+      background-color: transparent !important;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -28,25 +28,24 @@
       align-items: center;
     }
 
-    /* Định dạng chung cho cả hai trạng thái của Avatar */
+    /* Định dạng chung cho avatar */
     .avatar {
       position: absolute;
       width: 100vw;
       height: 100vh;
-      object-fit: contain; /* Tự động co giãn vừa khít màn hình giữ nguyên tỷ lệ */
-      display: none; /* Mặc định ẩn cả hai ảnh */
-      transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1); /* Tạo đệm chuyển động siêu mượt khi nhún nhảy */
-      pointer-events: none; /* Tránh click nhầm vào ảnh */
+      object-fit: contain;
+      display: none;
+      transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1);
+      pointer-events: none;
     }
 
-    /* Hiển thị ảnh đang hoạt động */
+    /* Trạng thái hiển thị hoạt động */
     .avatar.active {
       display: block;
     }
 
-    /* Hiệu ứng nhún nhảy (Bounce) cực chất và mượt mà khi nhân vật nói chuyện */
+    /* Hoạt ảnh nhún nhảy đàn hồi khi nói chuyện */
     .avatar.speaking {
-      /* CẢI TIẾN: Tăng thời gian chu kỳ từ 0.15s lên 0.28s giúp hoạt ảnh chậm rãi, bồng bềnh và mượt mà hơn */
       animation: talkBounce 0.28s infinite ease-in-out alternate;
     }
 
@@ -55,16 +54,11 @@
         transform: translateY(0) scaleX(1) scaleY(1);
       }
       100% {
-        /* Nhảy nhẹ lên 10px và phồng xẹp theo tỷ lệ đàn hồi tự nhiên */
         transform: translateY(-10px) scaleX(1.02) scaleY(0.97);
       }
     }
 
-    /* ====================================================== */
-    /* HỆ THỐNG DEBUG VÀ THÔNG BÁO LỖI (CHỈ HIỂN THỊ KHI CẦN)  */
-    /* ====================================================== */
-    
-    /* Bảng thông báo lỗi khi trình duyệt chặn micro */
+    /* Khung thông báo lỗi thiết lập phần cứng */
     #error-msg {
       display: none;
       position: fixed;
@@ -102,9 +96,9 @@
       font-family: monospace;
     }
 
-    /* Bảng điều khiển ẩn hỗ trợ Debug độ nhạy mic (Bật bằng phím D hoặc Nhấp đúp chuột) */
+    /* Giao diện bảng điều khiển Debug */
     #debug-panel {
-      display: none; /* Mặc định ẩn hoàn toàn để không ảnh hưởng đến OBS */
+      display: none;
       position: fixed;
       top: 20px;
       left: 20px;
@@ -166,25 +160,21 @@
 <body>
 
   <div class="avatar-container">
-    <!-- Trạng thái Im Lặng (Idle) -->
     <img id="avatar-idle" class="avatar active" src="images/idle.png" alt="Idle State">
-    <!-- Trạng thái Đang Nói (Speaking) -->
     <img id="avatar-speak" class="avatar" src="images/speak.png" alt="Speaking State">
   </div>
 
-  <!-- Bảng thông báo lỗi khi duyệt Web bị chặn quyền truy cập Micro -->
   <div id="error-msg">
     <h2>⚠️ Lỗi Truy Cập Micro!</h2>
     <p id="error-text">Trình duyệt không thể truy cập micro của bạn.</p>
     <p style="font-size: 12px; color: #aaa; text-align: left; margin-top: 15px; border-top: 1px solid #444; padding-top: 10px; line-height: 1.4;">
       💡 <strong>Cách xử lý lỗi:</strong><br>
-      1. Hãy chắc chắn bạn đã <strong>nhấp chuột vào trang web này ít nhất một lần</strong> để trình duyệt kích hoạt quyền hỏi micro.<br>
-      2. <strong>Bảo mật Chrome/Edge:</strong> Bạn KHÔNG THỂ mở trực tiếp file HTML tĩnh từ ổ đĩa dạng <code>file:///...</code>. Trình duyệt sẽ chặn mic vì lý do bảo mật. Hãy khởi chạy ứng dụng thông qua <strong>Localhost</strong> (ví dụ: extension <em>Live Server</em> trên VS Code hoặc công cụ local server bất kỳ) hoặc đưa trực tiếp vào OBS.<br>
-      3. Nếu đưa vào OBS Browser Source, hãy chắc chắn tích vào ô <strong>"Local file"</strong> và kiểm tra xem nguồn OBS đã cấp quyền mic chưa.
+      1. Đảm bảo đã nhấp chuột vào trang ít nhất một lần để kích hoạt ngữ cảnh âm thanh.<br>
+      2. <strong>Bảo mật:</strong> Giao thức <code>file://</code> bị chặn mic. Hãy khởi chạy ứng dụng thông qua <strong>Localhost</strong> hoặc đưa trực tiếp vào OBS Browser Source.<br>
+      3. Trên OBS, hãy tích chọn mục <strong>"Local file"</strong> và phân quyền âm thanh cho nguồn tương ứng.
     </p>
   </div>
 
-  <!-- Bảng Debug ẩn giúp căn chỉnh các thông số chính xác -->
   <div id="debug-panel">
     <h3>TechForge Debug</h3>
     <div class="debug-row">
@@ -192,11 +182,11 @@
       <span id="debug-status" style="color: #ff3366; font-weight: bold;">Chưa kết nối</span>
     </div>
     <div class="debug-row">
-      <span>Độ ồn nền tự động:</span>
+      <span>Đo độ ồn nền:</span>
       <span id="debug-noise-floor" style="color: #888;">0</span>
     </div>
     <div class="debug-row">
-      <span>Âm lượng Giọng sạch:</span>
+      <span>Biên độ lọc sạch:</span>
       <span><span id="debug-vol-num">0</span> / 100</span>
     </div>
     <div class="debug-bar-bg">
@@ -204,42 +194,35 @@
       <div id="debug-threshold-line" class="debug-threshold-line"></div>
     </div>
     <div class="debug-row" style="margin-top: 12px;">
-      <span>Ngưỡng kích hoạt:</span>
+      <span>Ngưỡng (Threshold):</span>
       <span id="debug-threshold" style="color: #ffcc00; font-weight: bold;">10</span>
     </div>
     <p style="font-size: 11px; color: #888; line-height: 1.4; margin: 15px 0 0 0; border-top: 1px solid #333; padding-top: 10px;">
-      * Nhấp đúp chuột (Double click) or nhấn phím <strong>D</strong> để ẩn/hiện bảng Debug này.<br>
-      * Thiết lập hiện tại sử dụng: <strong>Lọc nhiễu phần cứng AI + Khóa chống tự động khuếch đại (AGC) + Lọc thu hẹp dải giọng người (300Hz-1800Hz)</strong>.
+      * Nhấp đúp (Double click) hoặc nhấn phím <strong>D</strong> để ẩn/hiện bảng Debug.<br>
+      * Nhấn phím <strong>Mũi tên Lên (↑)</strong> để TĂNG Ngưỡng, phím <strong>Mũi tên Xuống (↓)</strong> để GIẢM Ngưỡng trực tiếp.
     </p>
   </div>
 
   <script>
-    const THRESHOLD = 10;      // Ngưỡng âm lượng giọng nói sạch (0 - 100).
+    // Đọc giá trị ngưỡng âm lượng từ localStorage hoặc thiết lập mặc định bằng 15
+    let THRESHOLD = parseInt(localStorage.getItem('reactive_avatar_threshold')) || 15; 
     
-    // CẢI TIẾN: Tăng thời gian từ 120ms lên 170ms để khẩu hình đớp miệng đóng/mở chậm rãi, từ tốn và tự nhiên hơn nhiều
-    const TALKING_SPEED = 170; 
+    const TALKING_SPEED = 170; // Chu kỳ luân phiên đóng/mở miệng khi nói (ms)
+    const SPEAK_HOLD_TIME = 200; // Thời gian duy trì trạng thái nói sau khi ngắt giọng (ms)
+    const ATTACK_FRAMES = 3; // Số khung hình liên tục vượt ngưỡng để xác nhận tiếng nói (lọc nhiễu xung)
 
     let audioContext = null;
     let analyser = null;
     let dataArray = null;
     let isStreamActive = false;
-    
-    // Quản lý thời gian duy trì trạng thái nói chuyện để tránh giật hình
     let lastSpeakTime = 0;
-    
-    // CẢI TIẾN: Tăng thời gian giữ khẩu hình từ 150ms lên 200ms giúp giữ miệng mở nhẹ nhàng hơn khi bạn ngắt câu ngắn
-    const SPEAK_HOLD_TIME = 200; 
 
-    // LỌC TIẾNG GÕ PHÍM & CLICK CHUỘT (Attack Filter)
-    let consecutiveFrames = 0;
-    const ATTACK_FRAMES = 2; // Cần âm lượng vượt ngưỡng liên tục trong 2 khung hình (~33ms) mới xác định là tiếng nói
-
-    // TỰ ĐỘNG ĐO TIẾNG ỒN NỀN (Auto Noise Floor Calibration)
+    // Bộ lọc độ ồn nền tự động (Auto Noise Floor Calibration)
     let noiseFloor = 0;
     const noiseSamples = [];
-    const NOISE_HISTORY_SIZE = 150; // Lưu mẫu trong ~2.5 giây để liên tục bám sát tiếng ồn phòng bạn
+    const NOISE_HISTORY_SIZE = 150; 
 
-    // Lấy các phần tử DOM
+    // Truy xuất các phần tử DOM
     const avatarIdle = document.getElementById('avatar-idle');
     const avatarSpeak = document.getElementById('avatar-speak');
     const errorMsg = document.getElementById('error-msg');
@@ -251,11 +234,15 @@
     const debugThreshold = document.getElementById('debug-threshold');
     const debugThresholdLine = document.getElementById('debug-threshold-line');
 
-    // Đồng bộ các tham số ban đầu lên bảng debug ẩn
-    debugThreshold.textContent = THRESHOLD;
-    debugThresholdLine.style.left = THRESHOLD + '%';
+    // Đồng bộ giao diện chỉ số Threshold
+    function updateThresholdUI() {
+      debugThreshold.textContent = THRESHOLD;
+      debugThresholdLine.style.left = THRESHOLD + '%';
+      localStorage.setItem('reactive_avatar_threshold', THRESHOLD);
+    }
+    updateThresholdUI();
 
-    // Hàm thiết lập AudioContext và bắt đầu xử lý mic
+    // Khởi tạo hệ thống thu âm Web Audio API
     function initAudio() {
       if (isStreamActive) return;
 
@@ -266,18 +253,18 @@
       }
       
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showError("Chrome/Edge chặn mic trên giao thức file://. Hãy sử dụng Localhost (như Live Server) hoặc import thẳng vào OBS Browser Source.");
+        showError("Trình duyệt chặn truy cập mic (không phải HTTPS hoặc lỗi file://).");
         return;
       }
 
       audioContext = new AudioContextClass();
 
-      // Kích hoạt bộ xử lý tín hiệu phần cứng trực tiếp từ micro của Chrome/Edge
+      // Cấu hình ràng buộc phần cứng (Hardware Audio Constraints)
       const constraints = {
         audio: {
-          echoCancellation: true,    // Khử tiếng vang hồi tiếp
-          noiseSuppression: true,    // KÍCH HOẠT: Bộ khử tiếng ồn bằng AI tích hợp sẵn
-          autoGainControl: false     // TẮT: Không tự động khuếch đại (tránh mic tự thổi to tiếng dế)
+          echoCancellation: true,    // Khử tiếng vang phản hồi
+          noiseSuppression: true,    // Kích hoạt khử nhiễu nền phần cứng
+          autoGainControl: false     // Khóa tính năng tự động tăng âm lượng (AGC)
         },
         video: false
       };
@@ -285,7 +272,7 @@
       navigator.mediaDevices.getUserMedia(constraints)
         .then(function(stream) {
           isStreamActive = true;
-          errorMsg.style.display = 'none'; // Ẩn bảng báo lỗi nếu kết nối thành công
+          errorMsg.style.display = 'none'; 
           
           debugStatus.textContent = 'Đang hoạt động';
           debugStatus.style.color = '#00ff66';
@@ -302,24 +289,24 @@
         })
         .catch(function(err) {
           showError("Không thể kết nối Micro: " + err.message);
-          debugStatus.textContent = 'Bị từ chối / Lỗi';
+          debugStatus.textContent = 'Lỗi kết nối';
           debugStatus.style.color = '#ff3366';
         });
     }
 
+    // Hiển thị hộp thoại cảnh báo lỗi
     function showError(message) {
       errorMsg.style.display = 'block';
       errorText.textContent = message;
     }
 
-    // Vòng lặp liên tục để đọc dữ liệu âm thanh và đổi ảnh dựa trên ngưỡng âm lượng
+    // Vòng lặp lấy mẫu và xử lý tín hiệu âm thanh liên tục (60 FPS)
     function monitorVolume() {
       if (!analyser) return;
 
       analyser.getByteFrequencyData(dataArray);
 
-      // BỘ LỌC TẦN SỐ GIỌNG NGƯỜI LÕI (CORE HUMAN VOCAL FILTER)
-      // Quét dải tần số 300Hz - 1800Hz (Bin 2 đến Bin 10) để bỏ qua quạt trầm và tiếng dế siêu cao tần
+      // Thuật toán lọc dải tần số giọng nói con người (300Hz - 1800Hz / Bins 2 - 10)
       let voiceFrequenciesSum = 0;
       const startBin = 2;  
       const endBin = 10;   
@@ -330,12 +317,13 @@
       
       const averageVoiceVolume = voiceFrequenciesSum / (endBin - startBin + 1);
 
-      // Tự động đo độ ồn nền của dải giọng lõi
+      // Cập nhật mẫu đo lường để hiệu chuẩn mức tiếng ồn nền (Noise Floor)
       noiseSamples.push(averageVoiceVolume);
       if (noiseSamples.length > NOISE_HISTORY_SIZE) {
         noiseSamples.shift();
       }
       
+      // Tính toán mức ồn nền tĩnh (Lấy trung bình của 15% số mẫu nhỏ nhất trong lịch sử gần đây)
       const sortedSamples = [...noiseSamples].sort((a, b) => a - b);
       const lowerCount = Math.max(1, Math.floor(sortedSamples.length * 0.15));
       let sumNoise = 0;
@@ -344,25 +332,25 @@
       }
       const calculatedNoiseFloor = sumNoise / lowerCount;
       
-      // Quy chuẩn sang thang điểm 0 - 100
+      // Quy chuẩn biên độ về thang đo 0-100
       noiseFloor = Math.min(Math.round(calculatedNoiseFloor * 1.5), 100);
       const rawVolume = Math.min(Math.round(averageVoiceVolume * 1.5), 100);
 
-      // Triệt tiêu tiếng ồn: Âm lượng giọng nói thực tế = Âm lượng đo được - Độ ồn nền
+      // Triệt tiêu tiếng ồn nền khỏi tín hiệu âm lượng đo được
       const effectiveVolume = Math.max(0, rawVolume - noiseFloor);
 
-      // Cập nhật dữ liệu lên bảng debug
+      // Cập nhật thông số lên bảng điều khiển chẩn đoán
       debugNoiseFloor.textContent = noiseFloor;
       debugVolNum.textContent = effectiveVolume;
       debugVolBar.style.width = effectiveVolume + '%';
 
       const now = Date.now();
 
-      // Cơ chế ngưỡng kép (Hysteresis): Giảm nhẹ ngưỡng giữ nói để duy trì khẩu hình mượt mà
+      // Thuật toán ngưỡng kích hoạt kép (Hysteresis) giúp làm dịu điểm rơi giọng nói
       const isCurrentlyTalking = avatarSpeak.classList.contains('active') || (avatarIdle.classList.contains('active') && avatarIdle.classList.contains('speaking'));
       const activeThreshold = isCurrentlyTalking ? Math.max(1, THRESHOLD - 2) : THRESHOLD;
 
-      // Lọc tiếng động xung cực ngắn (click chuột, gõ phím)
+      // Xử lý bộ lọc nhiễu xung (Attack Filter)
       if (effectiveVolume > activeThreshold) {
         consecutiveFrames++;
       } else {
@@ -373,46 +361,43 @@
         lastSpeakTime = now;
       }
 
-      // KIỂM TRA TRẠNG THÁI NÓI CHUYỆN (Sử dụng thời gian đệm trễ)
+      // Xác định trạng thái nói chuyện dựa trên bộ đệm thời gian duy trì (SPEAK_HOLD_TIME)
       const isSpeaking = (now - lastSpeakTime < SPEAK_HOLD_TIME);
 
       if (isSpeaking) {
-        // Luân phiên chuyển nhanh giữa ảnh ĐÓNG và MỞ miệng theo nhịp thời gian (TALKING_SPEED)
+        // Thuật toán đớp miệng nhịp nhàng theo chu kỳ thời gian (Talking Speed Loop)
         const showOpenMouth = Math.floor(now / TALKING_SPEED) % 2 === 0;
 
         if (showOpenMouth) {
-          // Trạng thái: MỞ MIỆNG (Speak)
           avatarIdle.classList.remove('active');
           avatarIdle.classList.remove('speaking');
           
           avatarSpeak.classList.add('active');
-          avatarSpeak.classList.add('speaking'); // Nhún nhảy
+          avatarSpeak.classList.add('speaking');
         } else {
-          // Trạng thái: KHÉP MIỆNG (Idle temporarily during speech)
           avatarSpeak.classList.remove('active');
           avatarSpeak.classList.remove('speaking');
           
           avatarIdle.classList.add('active');
-          avatarIdle.classList.add('speaking'); // Vẫn nhún nhảy nhịp nói để tạo cảm giác nhân vật sống động!
+          avatarIdle.classList.add('speaking'); 
         }
       } else {
-        // Trạng thái: IM LẶNG HOÀN TOÀN (Idle)
         avatarSpeak.classList.remove('active');
         avatarSpeak.classList.remove('speaking');
         
         avatarIdle.classList.add('active');
-        avatarIdle.classList.remove('speaking'); // Dừng nhún nhảy
+        avatarIdle.classList.remove('speaking'); 
       }
 
       requestAnimationFrame(monitorVolume);
     }
 
-    // Tự động xin quyền mic ngay khi trang tải xong
+    // Tự động khởi tạo ngữ cảnh thu âm khi tải trang
     window.onload = function() {
       initAudio();
     };
 
-    // Dự phòng click chuột để khởi động mic
+    // Dự phòng kích hoạt lại ngữ cảnh thu âm khi có tương tác
     window.onclick = function() {
       if (audioContext && audioContext.state === 'suspended') {
         audioContext.resume();
@@ -420,15 +405,31 @@
       initAudio();
     };
 
-    // Phím tắt 'D' ẩn/hiện bảng Debug
+    // Đăng ký sự kiện phím điều hướng và ẩn/hiện Debug panel
     window.addEventListener('keydown', function(e) {
       if (e.key.toLowerCase() === 'd') {
         const panel = document.getElementById('debug-panel');
         panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
       }
+      
+      // Tăng/giảm trực tiếp chỉ số Threshold thông qua phím mũi tên Lên/Xuống
+      if (e.key === 'ArrowUp') {
+        if (THRESHOLD < 100) {
+          THRESHOLD += 1;
+          updateThresholdUI();
+        }
+        e.preventDefault();
+      }
+      if (e.key === 'ArrowDown') {
+        if (THRESHOLD > 1) {
+          THRESHOLD -= 1;
+          updateThresholdUI();
+        }
+        e.preventDefault();
+      }
     });
 
-    // Nhấp đúp chuột ẩn/hiện bảng Debug
+    // Nhấp đúp chuột để đóng/mở nhanh bảng Debug
     window.addEventListener('dblclick', function() {
       const panel = document.getElementById('debug-panel');
       panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
